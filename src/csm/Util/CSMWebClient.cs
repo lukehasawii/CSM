@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 
 namespace CSM.Util
 {
@@ -10,17 +11,17 @@ namespace CSM.Util
         protected override WebRequest GetWebRequest(Uri address)
         {
             this._request = base.GetWebRequest(address);
-            // Force IPv4 for now, TODO: Remove when CSM supports IPv6
+
             if (this._request is HttpWebRequest webRequest)
             {
                 webRequest.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
                 {
-                    if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    if (remoteEndPoint.AddressFamily == AddressFamily.InterNetworkV6 && Socket.OSSupportsIPv6)
                     {
-                        return new IPEndPoint(IPAddress.Any, 0);
+                        return new IPEndPoint(IPAddress.IPv6Any, 0);
                     }
 
-                    throw new InvalidOperationException("no IPv4 address");
+                    return new IPEndPoint(IPAddress.Any, 0);
                 };
 
                 webRequest.AllowAutoRedirect = false;
