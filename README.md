@@ -21,6 +21,12 @@ Feel free to join the development Discord server [here](https://discord.gg/RjACP
 
 This mod and its source code is licensed under the MIT license.
 
+## Known Limitations
+
+- Population and vehicle movements are not fully synchronized yet.
+- Use `/sync` to reload the save if you notice desyncs.
+- Experimental periodic vehicle position sync tries to reduce drifting.
+
 ## Download & Install
 
 The easiest way to install this mod is from the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=1558438291). Remember to enable it in the content manager.

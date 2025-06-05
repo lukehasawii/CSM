@@ -5,6 +5,7 @@ using CSM.API.Commands;
 using CSM.API.Helpers;
 using CSM.API.Networking.Status;
 using CSM.BaseGame.Injections;
+using CSM.BaseGame.Helpers;
 using CSM.Commands;
 using CSM.Helpers;
 using CSM.Networking;
@@ -15,6 +16,7 @@ namespace CSM.Extensions
     public class ThreadingExtension : ThreadingExtensionBase
     {
         private DateTime _lastEconomyAndDropSync;
+        private DateTime _lastVehicleSync;
 
         public override void OnCreated(IThreading threading)
         {
@@ -58,6 +60,16 @@ namespace CSM.Extensions
                     SlowdownHelper.SendDroppedFrames();
                 }
                 _lastEconomyAndDropSync = DateTime.Now;
+            }
+
+            // Send vehicle position updates every five seconds
+            if (DateTime.Now.Subtract(_lastVehicleSync).TotalSeconds > 5)
+            {
+                if (MultiplayerManager.Instance.IsConnected())
+                {
+                    VehicleSyncHelper.Send();
+                }
+                _lastVehicleSync = DateTime.Now;
             }
 
             // Finish transactions
