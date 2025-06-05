@@ -235,6 +235,7 @@
     <Compile Include="Helpers\ArrayXHelper.cs" />
     <Compile Include="Helpers\InfoPanelHelper.cs" />
     <Compile Include="Helpers\ToolSimulator.cs" />
+    <Compile Include="Helpers\VehicleSyncHelper.cs" />
     <Compile Include="Injections\ArrayHandler.cs" />
     <Compile Include="Injections\BuildingHandler.cs" />
     <Compile Include="Injections\CampusHandler.cs" />
