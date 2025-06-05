@@ -93,31 +93,32 @@ namespace CSM.Extensions
 
             ModSupport.Instance.OnLevelUnloading();
 
-            //Code below destroys any created UI from the screen.
-            try
-            {
-                UIComponent _getui = UIView.GetAView().FindUIComponent<UIComponent>("ChatLogPanel");
-                UIComponent[] children = _getui.GetComponentsInChildren<UIComponent>();
+            // Code below destroys any created UI from the screen.
+            UIView view = UIView.GetAView();
+            if (view == null)
+                return;
 
-                foreach (UIComponent child in children)
+            UIComponent chatLogPanel = view.FindUIComponent<UIComponent>("ChatLogPanel");
+            if (chatLogPanel != null)
+            {
+                foreach (UIComponent child in chatLogPanel.GetComponentsInChildren<UIComponent>())
                 {
                     Object.Destroy(child);
                 }
-
-                // Destroy duplicated multiplayer button
-                UIComponent temp = UIView.GetAView().FindUIComponent("MPConnectionPanel");
-                if (temp)
-                    Object.Destroy(temp);
-
-                // Destroy multiplayer join panel
-                UIComponent clientJoinPanel = UIView.GetAView().FindUIComponent("MPClientJoinPanel");
-                if (clientJoinPanel)
-                    Object.Destroy(clientJoinPanel);
             }
-            catch (NullReferenceException)
+
+            // Destroy duplicated multiplayer button
+            UIComponent connectionPanel = view.FindUIComponent("MPConnectionPanel");
+            if (connectionPanel != null)
             {
-                // Ignore, because it sometimes throws them... (Not caused by us)
-                // TODO: Rework this to be more stable
+                Object.Destroy(connectionPanel);
+            }
+
+            // Destroy multiplayer join panel
+            UIComponent clientJoinPanel = view.FindUIComponent("MPClientJoinPanel");
+            if (clientJoinPanel != null)
+            {
+                Object.Destroy(clientJoinPanel);
             }
         }
     }
