@@ -15,14 +15,28 @@ namespace CSM.BaseGame.Commands.Handler.Events
             ref EventData eventData = ref EventManager.instance.m_events.m_buffer[command.Event];
             eventData.Info.m_eventAI.SetTicketPrice(command.Event, ref eventData, command.Price);
 
-            if (InfoPanelHelper.IsEventBuilding(typeof(FootballPanel), command.Event, out WorldInfoPanel panel))
+            Type[] panelTypes =
             {
-                UISlider slider = ReflectionHelper.GetAttr<UISlider>(panel, "m_TicketPriceSlider");
+                typeof(FootballPanel),
+                typeof(FestivalPanel),
+                typeof(VarsitySportsArenaPanel)
+            };
 
-                SimulationManager.instance.m_ThreadingWrapper.QueueMainThread(() =>
+            foreach (Type panelType in panelTypes)
+            {
+                if (InfoPanelHelper.IsEventBuilding(panelType, command.Event, out WorldInfoPanel panel))
                 {
-                    slider.value = command.Price / 100f;
-                });
+                    UISlider slider = ReflectionHelper.GetAttr<UISlider>(panel, "m_TicketPriceSlider")
+                                   ?? ReflectionHelper.GetAttr<UISlider>(panel, "m_ticketPriceSlider");
+
+                    if (slider != null)
+                    {
+                        SimulationManager.instance.m_ThreadingWrapper.QueueMainThread(() =>
+                        {
+                            slider.value = command.Price / 100f;
+                        });
+                    }
+                }
             }
 
             IgnoreHelper.Instance.EndIgnore();
