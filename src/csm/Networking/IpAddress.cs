@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using CSM.API;
@@ -68,10 +69,33 @@ namespace CSM.Networking
             return null;
         }
 
-        // TODO: Cache response
+        private class CacheEntry
+        {
+            public IPAddress Address;
+            public DateTime Timestamp;
+        }
+
+        private static readonly Dictionary<string, CacheEntry> Ipv4Cache = new Dictionary<string, CacheEntry>();
+        private static readonly TimeSpan CacheLifetime = TimeSpan.FromMinutes(5);
+
         public static IPAddress GetIpv4(string host)
         {
-            return Dns.GetHostEntry(host).AddressList.FirstOrDefault(resolveAddress => resolveAddress.AddressFamily == AddressFamily.InterNetwork);
+            lock (Ipv4Cache)
+            {
+                if (Ipv4Cache.TryGetValue(host, out CacheEntry entry))
+                {
+                    if (DateTime.UtcNow - entry.Timestamp < CacheLifetime)
+                    {
+                        return entry.Address;
+                    }
+
+                    Ipv4Cache.Remove(host);
+                }
+
+                IPAddress address = Dns.GetHostEntry(host).AddressList.FirstOrDefault(resolveAddress => resolveAddress.AddressFamily == AddressFamily.InterNetwork);
+                Ipv4Cache[host] = new CacheEntry { Address = address, Timestamp = DateTime.UtcNow };
+                return address;
+            }
         }
     }
 }
