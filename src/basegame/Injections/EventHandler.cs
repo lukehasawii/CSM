@@ -5,6 +5,7 @@ using CSM.API.Helpers;
 using CSM.BaseGame.Commands.Data.Events;
 using HarmonyLib;
 using UnityEngine;
+using ColossalFramework;
 
 namespace CSM.BaseGame.Injections
 {
@@ -78,13 +79,68 @@ namespace CSM.BaseGame.Injections
                 return;
 
             // Event is 0, when it is set through the FestivalPanel for a certain band
-            // TODO: Sync price changes in FestivalPanel and VarsitySportsArenaPanel
             if (eventID == 0 || __instance.GetTicketPrice(eventID, ref data) == newPrice)
                 return;
 
             Command.SendToAll(new EventSetTicketPriceCommand()
             {
                 Event = eventID,
+                Price = newPrice
+            });
+        }
+    }
+
+    [HarmonyPatch(typeof(FestivalPanel))]
+    [HarmonyPatch("OnTicketPriceChanged")]
+    public class FestivalTicketPriceChanged
+    {
+        public static void Prefix(InstanceID ___m_InstanceID, float value)
+        {
+            if (IgnoreHelper.Instance.IsIgnored())
+                return;
+
+            ushort building = ___m_InstanceID.Building;
+            ushort eventId = BuildingManager.instance.m_buildings.m_buffer[building].m_eventIndex;
+            if (eventId == 0)
+                return;
+
+            ref EventData eventData = ref EventManager.instance.m_events.m_buffer[eventId];
+            int newPrice = Mathf.RoundToInt(value * 100f);
+
+            if (eventData.Info.m_eventAI.GetTicketPrice(eventId, ref eventData) == newPrice)
+                return;
+
+            Command.SendToAll(new EventSetTicketPriceCommand
+            {
+                Event = eventId,
+                Price = newPrice
+            });
+        }
+    }
+
+    [HarmonyPatch(typeof(VarsitySportsArenaPanel))]
+    [HarmonyPatch("OnTicketPriceChanged")]
+    public class VarsityTicketPriceChanged
+    {
+        public static void Prefix(InstanceID ___m_InstanceID, float value)
+        {
+            if (IgnoreHelper.Instance.IsIgnored())
+                return;
+
+            ushort building = ___m_InstanceID.Building;
+            ushort eventId = BuildingManager.instance.m_buildings.m_buffer[building].m_eventIndex;
+            if (eventId == 0)
+                return;
+
+            ref EventData eventData = ref EventManager.instance.m_events.m_buffer[eventId];
+            int newPrice = Mathf.RoundToInt(value * 100f);
+
+            if (eventData.Info.m_eventAI.GetTicketPrice(eventId, ref eventData) == newPrice)
+                return;
+
+            Command.SendToAll(new EventSetTicketPriceCommand
+            {
+                Event = eventId,
                 Price = newPrice
             });
         }
