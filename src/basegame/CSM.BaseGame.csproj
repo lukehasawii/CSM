@@ -63,7 +63,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <ProjectReference Include="..\csm\CSM.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseGameConnection.cs" />
@@ -282,6 +281,7 @@
       <Project>{ab27eacd-b9a9-42bc-bf8a-3b25aabff6ca}</Project>
       <Name>CSM.API</Name>
     </ProjectReference>
+    <ProjectReference Include="..\csm\CSM.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
