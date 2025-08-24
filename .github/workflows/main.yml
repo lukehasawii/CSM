@@ -55,14 +55,14 @@ jobs:
 
     # Publish artifacts
     - name: Upload mod DLLs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: CSM ${{ steps.csm_version.outputs.version }}
         path: src/csm/bin/Release/*.dll
         
     # Publish install script
     - name: Upload install script
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: CSM ${{ steps.csm_version.outputs.version }}
         path: scripts/install.ps1
@@ -102,7 +102,7 @@ jobs:
       if: github.ref == 'refs/heads/master'
 
     - name: Upload Docker Image
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: API Server Docker Image
         path: apiserver.tar
