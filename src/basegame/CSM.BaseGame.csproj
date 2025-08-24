@@ -63,6 +63,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <ProjectReference Include="..\csm\CSM.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseGameConnection.cs" />
